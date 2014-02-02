@@ -1,75 +1,90 @@
-#include <stdio.h>
-#include <GL/glut.h>
-#include <GL/gl.h>
-#include <time.h>
+#include "conway.h"
 
-int kWinWidth = 640;
-int kWinHeight = 480;
-int mWindow;
-int mCells[80][60] = {{0}, {0}};
-int mRunSpeed = 0;
-int mLiveCells;
-int mVerbose = 0;
-int mColorize = 0;
+#define CONWAY_WIN_WIDTH 640
+#define CONWAY_WIN_HEIGHT 480
 
-void reshape(int width, int height) {
+#define CONWAY_GRID_WIDTH 80
+#define CONWAY_GRID_HEIGHT 60
+
+typedef enum {
+    false = 0, true = 1
+} bool;
+
+int window_ptr;
+int cell_grid[CONWAY_GRID_WIDTH][CONWAY_GRID_HEIGHT] = {{0}, {0}};
+int sim_speed = 0;
+int num_cells_live = 0;
+bool verbose_mode = false;
+bool color_mode = false;
+
+void reshape(int width, int height)
+{
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	glOrtho(0.0f, kWinWidth, kWinHeight, 0.0f, 0.0f, 1.0f);
+	glOrtho(0.0f, CONWAY_WIN_WIDTH, CONWAY_WIN_HEIGHT, 0.0f, 0.0f, 1.0f);
 
 	glMatrixMode(GL_MODELVIEW);
-	glViewport(0, 0, kWinWidth, kWinHeight);
+	glViewport(0, 0, CONWAY_WIN_WIDTH, CONWAY_WIN_HEIGHT);
 
-	glutReshapeWindow(kWinWidth, kWinHeight);
+	glutReshapeWindow(CONWAY_WIN_WIDTH, CONWAY_WIN_HEIGHT);
 	glClear(GL_COLOR_BUFFER_BIT);
 }
 
-void randomizeCells() {
+void randomize_grid()
+{
 	srand(time(NULL));
-	for (int i = 0; i < 80; i+= 1) {
-		for (int j = 0; j < 60; j += 1) {
-			mCells[i][j] = rand() % 2;
-			mLiveCells += mCells[i][j];
+	for (int i = 0; i < CONWAY_GRID_WIDTH; ++i)
+    {
+		for (int j = 0; j < CONWAY_GRID_HEIGHT; ++j)
+        {
+			cell_grid[i][j] = rand() % 2;
+			num_cells_live += cell_grid[i][j];
 		}
 	}
 	glClear(GL_COLOR_BUFFER_BIT);
 	glutPostRedisplay();
 }
 
-void clearCells() {
-	for (int i = 0; i < 80; i+= 1) {
-		for (int j = 0; j < 60; j += 1) {
-			mCells[i][j] = 0;
+void clear_grid() {
+	for (int i = 0; i < CONWAY_GRID_WIDTH; ++i)
+    {
+		for (int j = 0; j < CONWAY_GRID_HEIGHT; ++j)
+        {
+			cell_grid[i][j] = 0;
 		}
 	}
-	mLiveCells = 0;
+	num_cells_live = 0;
 	glClear(GL_COLOR_BUFFER_BIT);
 	glutPostRedisplay();
 }
 
-int getNeighbourCount(int i, int j) {
-	int MAX_NORTH = 0, MAX_SOUTH = 59;
-	int MAX_WEST = 0, MAX_EAST = 79;
+int get_neighbours(int i, int j)
+{
+	int MAX_NORTH = 0, MAX_SOUTH = CONWAY_GRID_HEIGHT - 1;
+	int MAX_WEST = 0, MAX_EAST = CONWAY_GRID_WIDTH - 1;
 	int sum = 0;
 
-	if (i != MAX_EAST) sum += mCells[i + 1][j];
-	if (i != MAX_WEST) sum += mCells[i - 1][j];
-	if (j != MAX_SOUTH) sum += mCells[i][j + 1];
-	if (j != MAX_NORTH) sum += mCells[i][j - 1];
+	if (i != MAX_EAST) sum += cell_grid[i + 1][j];
+	if (i != MAX_WEST) sum += cell_grid[i - 1][j];
+	if (j != MAX_SOUTH) sum += cell_grid[i][j + 1];
+	if (j != MAX_NORTH) sum += cell_grid[i][j - 1];
 
-	if (i != MAX_EAST && j != MAX_SOUTH) sum += mCells[i + 1][j + 1];
-	if (i != MAX_EAST && j != MAX_NORTH) sum += mCells[i + 1][j - 1];
-	if (i != MAX_WEST && j != MAX_SOUTH) sum += mCells[i - 1][j + 1];
-	if (i != MAX_WEST && j != MAX_NORTH) sum += mCells[i - 1][j - 1];
+	if (i != MAX_EAST && j != MAX_SOUTH) sum += cell_grid[i + 1][j + 1];
+	if (i != MAX_EAST && j != MAX_NORTH) sum += cell_grid[i + 1][j - 1];
+	if (i != MAX_WEST && j != MAX_SOUTH) sum += cell_grid[i - 1][j + 1];
+	if (i != MAX_WEST && j != MAX_NORTH) sum += cell_grid[i - 1][j - 1];
 
 	return sum;
 }
 
-void drawCell(int x, int y, int neighbours) {
+void draw_cell(int x, int y, int neighbours)
+{
 	glPointSize(8);
 	glBegin(GL_POINTS);
-	if (mColorize) {
-		switch(neighbours) {
+	if (color_mode)
+    {
+		switch(neighbours)
+        {
 			case 0: glColor4f(1.0f, 0.0f, 0.0f, 1.0f); break;
 			case 2: case 3: glColor4f(0.0f, 1.0f, 0.0f, 1.0f); break;
 			case 4: glColor4f(0.2f, 0.8f, 0.0f, 1.0f); break;
@@ -79,7 +94,9 @@ void drawCell(int x, int y, int neighbours) {
 			case 1: case 8: glColor4f(0.9f, 0.1f, 0.0f, 1.0f); break;
 			default: glColor4f(0.0f, 0.0f, 0.0f, 1.0f); break;
 		}
-	} else {
+	}
+    else
+    {
 		glColor4f(0.0f, 0.0f, 0.0f, 1.0f);
 	}
 		
@@ -87,7 +104,8 @@ void drawCell(int x, int y, int neighbours) {
 	glEnd();
 }
 
-void drawGridline(int x1, int y1, int x2, int y2) {
+void draw_gridline(int x1, int y1, int x2, int y2)
+{
 	glBegin(GL_LINES);
 		glColor4f(0.7f, 0.7f, 0.7f, 1.0f);
 		glVertex2i(x1, y1);
@@ -95,119 +113,149 @@ void drawGridline(int x1, int y1, int x2, int y2) {
 	glEnd();
 }
 
-void drawBoard() {
+void draw_board()
+{
 	glClear(GL_COLOR_BUFFER_BIT);
-	for (int i = 0; i < 80; i += 1) {
-		for (int j = 0; j < 60; j += 1) {
-			if (mCells[i][j]) {
-				drawCell(i, j, getNeighbourCount(i, j));
+	for (int i = 0; i < CONWAY_GRID_WIDTH; ++i)
+    {
+		for (int j = 0; j < CONWAY_GRID_HEIGHT; ++j)
+        {
+			if (cell_grid[i][j])
+            {
+				draw_cell(i, j, get_neighbours(i, j));
 			}
-			drawGridline(0, j*8, 640, j*8);
+			draw_gridline(0, j*8, 8 * CONWAY_GRID_WIDTH, j*8);
 		}
-		drawGridline(i*8, 0, i*8, 480);
+		draw_gridline(i*8, 0, i*8, 8 * CONWAY_GRID_HEIGHT);
 	}
 	glutSwapBuffers();
 }
 
-void simulate(int unused) {
-	int newCells[80][60] = {{0}, {0}};
-	for (int i = 0; i < 80; i+= 1) {
-		for (int j = 0; j < 60; j+= 1) {
+void simulate(int unused)
+{
+	int newCells[CONWAY_GRID_WIDTH][CONWAY_GRID_HEIGHT] = {{0}, {0}};
+	for (int i = 0; i < CONWAY_GRID_WIDTH; ++i)
+    {
+		for (int j = 0; j < CONWAY_GRID_HEIGHT; ++j)
+        {
 			
-			int sum = getNeighbourCount(i, j);
+			int sum = get_neighbours(i, j);
 
-			if (mCells[i][j] == 1) { // Live cell
-				if (sum == 2 || sum == 3) {
+			if (cell_grid[i][j] == 1)
+            { // Live cell
+				if (sum == 2 || sum == 3)
+                {
 					newCells[i][j] = 1;
-				} else { // sum < 2 || sum > 3
-					newCells[i][j] = 0;
-					mLiveCells -= 1;
 				}
-			} else { // Dead cell
-				if (sum == 3) {
+                else
+                { // sum < 2 || sum > 3
+					newCells[i][j] = 0;
+					num_cells_live -= 1;
+				}
+			}
+            else
+            { // Dead cell
+				if (sum == 3)
+                {
 					newCells[i][j] = 1;
-					mLiveCells += 1;
-				} else {
+					num_cells_live += 1;
+				}
+                else
+                {
 					newCells[i][j] = 0;
 				}
 			}
 		}
 	}
 
-	memmove(mCells, newCells, 80*60*sizeof(int));
+	memmove(cell_grid, newCells, CONWAY_GRID_WIDTH*CONWAY_GRID_HEIGHT*sizeof(int));
 
-	if (mVerbose) {
-		printf("Currently living cells: %d\n", mLiveCells);
+	if (verbose_mode)
+    {
+		printf("Currently living cells: %d\n", num_cells_live);
 	}
 
-	if (mLiveCells == 0) {
-		mRunSpeed = 0;
+	if (num_cells_live == 0)
+    {
+		sim_speed = 0;
 	}
 
 	glutPostRedisplay();
 }
 
-void display() {
-	drawBoard();
+void display()
+{
+	draw_board();
 	int sleepTime = 0;
-	switch (mRunSpeed) {
+	switch (sim_speed)
+    {
 		case 1: sleepTime = 2000; break;
 		case 2: sleepTime = 800; break;
 		case 3: sleepTime = 300; break;
 	}
 
-	if (mRunSpeed > 0 && sleepTime > 0) {
+	if (sim_speed > 0 && sleepTime > 0)
+    {
 		glutTimerFunc(sleepTime, simulate, 0);
-	} else if (mVerbose) {
+	}
+    else if (verbose_mode)
+    {
 		printf("Idling\n");
 	}
 }
 
-void toggleCell(int x, int y) {
+void toggle_cell(int x, int y)
+{
 	int cx = (int)x/8;
 	int cy = (int)y/8;
 
-	if (mCells[cx][cy]) {
-		mCells[cx][cy] = 0;
-		mLiveCells -= 1;
-	} else {
-		mCells[cx][cy] = 1;
-		mLiveCells += 1;
+	if (cell_grid[cx][cy])
+    {
+		cell_grid[cx][cy] = 0;
+		num_cells_live -= 1;
+	}
+    else
+    {
+		cell_grid[cx][cy] = 1;
+		num_cells_live += 1;
 	}
 
 	display();
 }
 
-void keyboardFunc(unsigned char key, int x, int y) {
-	int oldSpeed = mRunSpeed;
-	switch(key) {
-		case 'Q': case 'q': glutDestroyWindow(mWindow); break;
-		case 'R': case 'r': randomizeCells(); drawBoard(); mRunSpeed = 0; break;
-		case 'C': case 'c': clearCells(); drawBoard(); mRunSpeed = 0; break;
-		case 'P': case 'p': mRunSpeed = 0; break;
-		case '1': mRunSpeed = 1; break;
-		case '2': mRunSpeed = 2; break;
-		case '3': mRunSpeed = 3; break;
-		case 'S': case 's': mRunSpeed = 0; simulate(0); glutPostRedisplay(); break;
-		case 'V': case 'v': mVerbose = mVerbose == 0 ? 1 : 0; break;
-		case 'A': case 'a': mColorize = mColorize == 0? 1 : 0; drawBoard(); break;
+void kbd_func(unsigned char key, int x, int y)
+{
+	int oldSpeed = sim_speed;
+	switch(key)
+    {
+		case 'Q': case 'q': glutDestroyWindow(window_ptr); break;
+		case 'R': case 'r': randomize_grid(); draw_board(); sim_speed = 0; break;
+		case 'C': case 'c': clear_grid(); draw_board(); sim_speed = 0; break;
+		case 'P': case 'p': sim_speed = 0; break;
+		case '1': sim_speed = 1; break;
+		case '2': sim_speed = 2; break;
+		case '3': sim_speed = 3; break;
+		case 'S': case 's': sim_speed = 0; simulate(0); glutPostRedisplay(); break;
+		case 'V': case 'v': verbose_mode = verbose_mode == true ? false : true; break;
+		case 'A': case 'a': color_mode = color_mode == true ? false : true; draw_board(); break;
 	}
 
-	if (oldSpeed != mRunSpeed && oldSpeed == 0) {
+	if (oldSpeed != sim_speed && oldSpeed == 0)
+    {
 		glutPostRedisplay();
 	}
 }
 
-void mouseClicked(int button, int state, int x, int y) {
-	if (button == GLUT_LEFT_BUTTON && state) {
-		toggleCell(x, y);
+void mouse_func(int button, int state, int x, int y)
+{
+	if (button == GLUT_LEFT_BUTTON && state)
+    {
+		toggle_cell(x, y);
 	}
 }
 
-void printHelp() {
-	printf("Written by:\tAndrew Azores\n\t\tMcMaster University\n\t\t");
-	printf("Computer Science 3GC3\n\t\tAssignment 1, Part B\n\n");
-
+void print_help()
+{
 	printf("Instructions:\n");
 	printf("Press 1, 2, or 3 to run the simulation at varying speeds (3 is fast)\n");
 	printf("Press P to pause the simulation\n");
@@ -220,26 +268,27 @@ void printHelp() {
 	printf("Press Q to quit\n");
 }
 
-int main(int argc, char** argv) {
-	printHelp();
+int main(int argc, char** argv)
+{
+	print_help();
 
 	glutInitDisplayMode(GLUT_RGB|GLUT_DOUBLE);
-	glutInitWindowSize(kWinWidth, kWinHeight);
+	glutInitWindowSize(CONWAY_WIN_WIDTH, CONWAY_WIN_HEIGHT);
 	glutInitWindowPosition(0, 0);	
 	glutInit(&argc, argv);
 
-	mWindow = glutCreateWindow("Life");
+	window_ptr = glutCreateWindow("Life");
 
 	glClearColor(1.0f, 1.0f, 1.0f, 0.0f);
 	glClear(GL_COLOR_BUFFER_BIT);
-	reshape(kWinWidth, kWinHeight);
+	reshape(CONWAY_WIN_WIDTH, CONWAY_WIN_HEIGHT);
 
-	randomizeCells();
+	randomize_grid();
 
 	glutReshapeFunc(reshape);
 	glutDisplayFunc(display);
-	glutKeyboardFunc(keyboardFunc);
-	glutMouseFunc(mouseClicked);
+	glutKeyboardFunc(kbd_func);
+	glutMouseFunc(mouse_func);
 	
 	glutMainLoop();
 	return(0);

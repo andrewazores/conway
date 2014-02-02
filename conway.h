@@ -4,6 +4,8 @@
 #include <GL/gl.h>
 #include <time.h>
 
+#include "bool.h"
+
 #ifndef CONWAY_H_GUARD
 #define CONWAY_H_GUARD
 

@@ -6,11 +6,7 @@
 #define CONWAY_GRID_WIDTH 80
 #define CONWAY_GRID_HEIGHT 60
 
-typedef enum {
-    false = 0, true = 1
-} bool;
-
-int window_ptr;
+int window_id;
 int cell_grid[CONWAY_GRID_WIDTH][CONWAY_GRID_HEIGHT] = {{0}, {0}};
 int sim_speed = 0;
 int num_cells_live = 0;
@@ -228,7 +224,7 @@ void kbd_func(unsigned char key, int x, int y)
 	int oldSpeed = sim_speed;
 	switch(key)
     {
-		case 'Q': case 'q': glutDestroyWindow(window_ptr); break;
+		case 'Q': case 'q': glutDestroyWindow(window_id); break;
 		case 'R': case 'r': randomize_grid(); draw_board(); sim_speed = 0; break;
 		case 'C': case 'c': clear_grid(); draw_board(); sim_speed = 0; break;
 		case 'P': case 'p': sim_speed = 0; break;
@@ -277,7 +273,7 @@ int main(int argc, char** argv)
 	glutInitWindowPosition(0, 0);	
 	glutInit(&argc, argv);
 
-	window_ptr = glutCreateWindow("Life");
+	window_id = glutCreateWindow("Life");
 
 	glClearColor(1.0f, 1.0f, 1.0f, 0.0f);
 	glClear(GL_COLOR_BUFFER_BIT);

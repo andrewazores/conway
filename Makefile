@@ -1,6 +1,9 @@
+CC=gcc
+CFLAGS=-std=c99 -Wall -Wextra -Wdouble-promotion -Wformat -Wconversion -Wpedantic
+LIBS=-lGL -lGLU -lglut
 all:
 	mkdir -p gen
-	gcc -std=c99 -Wall conway.c -o gen/conway.o -lGL -lGLU -lglut
+	$(CC) $(CFLAGS) conway.c -o gen/conway.o $(LIBS)
 
 clean:
 	rm -rf gen

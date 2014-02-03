@@ -9,7 +9,7 @@
 #define PX_SIZE 8
 
 int window_id;
-int cell_grid[CONWAY_GRID_WIDTH][CONWAY_GRID_HEIGHT] = {{0}, {0}};
+unsigned char cell_grid[CONWAY_GRID_WIDTH][CONWAY_GRID_HEIGHT] = {{0}, {0}};
 int sim_speed = 0;
 int num_cells_live = 0;
 bool verbose_mode = false;
@@ -30,13 +30,13 @@ void reshape(int width, int height)
 
 void randomize_grid()
 {
-	srand(time(NULL));
+	srand((unsigned int)time(NULL));
 	for (int i = 0; i < CONWAY_GRID_WIDTH; ++i)
     {
 		for (int j = 0; j < CONWAY_GRID_HEIGHT; ++j)
         {
-			cell_grid[i][j] = rand() % 2;
-			num_cells_live += cell_grid[i][j];
+			cell_grid[i][j] = (unsigned char)rand() % 2;
+			num_cells_live += (int)cell_grid[i][j];
 		}
 	}
 	glClear(GL_COLOR_BUFFER_BIT);
@@ -131,7 +131,7 @@ void draw_board()
 
 void simulate(int unused)
 {
-	int newCells[CONWAY_GRID_WIDTH][CONWAY_GRID_HEIGHT] = {{0}, {0}};
+	unsigned char newCells[CONWAY_GRID_WIDTH][CONWAY_GRID_HEIGHT] = {{0}, {0}};
 	for (int i = 0; i < CONWAY_GRID_WIDTH; ++i)
     {
 		for (int j = 0; j < CONWAY_GRID_HEIGHT; ++j)
@@ -166,7 +166,7 @@ void simulate(int unused)
 		}
 	}
 
-	memmove(cell_grid, newCells, CONWAY_GRID_WIDTH*CONWAY_GRID_HEIGHT*sizeof(int));
+	memmove(cell_grid, newCells, CONWAY_GRID_WIDTH*CONWAY_GRID_HEIGHT*sizeof(unsigned char));
 
 	if (verbose_mode)
     {
@@ -184,7 +184,7 @@ void simulate(int unused)
 void display()
 {
 	draw_board();
-	int sleepTime = 0;
+	unsigned int sleepTime = 0;
 	switch (sim_speed)
     {
 		case 1: sleepTime = 2000; break;

@@ -6,6 +6,8 @@
 #define CONWAY_GRID_WIDTH 80
 #define CONWAY_GRID_HEIGHT 60
 
+#define PX_SIZE 8
+
 int window_id;
 int cell_grid[CONWAY_GRID_WIDTH][CONWAY_GRID_HEIGHT] = {{0}, {0}};
 int sim_speed = 0;
@@ -75,7 +77,7 @@ int get_neighbours(int i, int j)
 
 void draw_cell(int x, int y, int neighbours)
 {
-	glPointSize(8);
+	glPointSize(PX_SIZE);
 	glBegin(GL_POINTS);
 	if (color_mode)
     {
@@ -96,7 +98,7 @@ void draw_cell(int x, int y, int neighbours)
 		glColor4f(0.0f, 0.0f, 0.0f, 1.0f);
 	}
 		
-	glVertex2i(8*x + 4, 8*y + 4);
+	glVertex2i(PX_SIZE*x + PX_SIZE/2, PX_SIZE*y + PX_SIZE/2);
 	glEnd();
 }
 
@@ -120,9 +122,9 @@ void draw_board()
             {
 				draw_cell(i, j, get_neighbours(i, j));
 			}
-			draw_gridline(0, j*8, 8 * CONWAY_GRID_WIDTH, j*8);
+			draw_gridline(0, j*PX_SIZE, PX_SIZE * CONWAY_GRID_WIDTH, j*PX_SIZE);
 		}
-		draw_gridline(i*8, 0, i*8, 8 * CONWAY_GRID_HEIGHT);
+		draw_gridline(i*PX_SIZE, 0, i*PX_SIZE, PX_SIZE * CONWAY_GRID_HEIGHT);
 	}
 	glutSwapBuffers();
 }
@@ -202,8 +204,8 @@ void display()
 
 void toggle_cell(int x, int y)
 {
-	int cx = (int)x/8;
-	int cy = (int)y/8;
+	int cx = (int)x/PX_SIZE;
+	int cy = (int)y/PX_SIZE;
 
 	if (cell_grid[cx][cy])
     {
@@ -224,7 +226,7 @@ void kbd_func(unsigned char key, int x, int y)
 	int oldSpeed = sim_speed;
 	switch(key)
     {
-		case 'Q': case 'q': glutDestroyWindow(window_id); break;
+		case 'Q': case 'q': glutDestroyWindow(window_id); exit(0);
 		case 'R': case 'r': randomize_grid(); draw_board(); sim_speed = 0; break;
 		case 'C': case 'c': clear_grid(); draw_board(); sim_speed = 0; break;
 		case 'P': case 'p': sim_speed = 0; break;

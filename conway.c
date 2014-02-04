@@ -232,7 +232,7 @@ void free_2d_array(unsigned char** arr, int width)
 void print_help()
 {
     printf("Instructions:\n");
-    printf("Press P to pause the simulation\n");
+    printf("Press P to (un)pause the simulation\n");
     printf("Press S to simulate a single generation\n");
     printf("Press R to randomize the board\n");
     printf("Press C to clear the board\n");

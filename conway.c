@@ -10,10 +10,10 @@
 
 int window_id;
 unsigned char** cell_grid;
-int sim_speed = 0;
 int num_cells_live = 0;
 bool verbose_mode = false;
-bool color_mode = false;
+bool color_mode = true;
+bool paused = true;
 
 void reshape(int width, int height)
 {
@@ -127,7 +127,7 @@ void draw_board()
     glutSwapBuffers();
 }
 
-void simulate(int unused)
+void simulate()
 {
     unsigned char** new_cells = make_2d_array(CONWAY_GRID_WIDTH, CONWAY_GRID_HEIGHT);
     for (int i = 0; i < CONWAY_GRID_WIDTH; ++i)
@@ -174,31 +174,16 @@ void simulate(int unused)
 
     if (num_cells_live == 0)
     {
-        sim_speed = 0;
+        paused = true;
     }
 
-    glutPostRedisplay();
 }
 
 void display()
 {
     draw_board();
-    unsigned int sleepTime = 0;
-    switch (sim_speed)
-    {
-        case 1: sleepTime = 2000; break;
-        case 2: sleepTime = 800; break;
-        case 3: sleepTime = 300; break;
-    }
-
-    if (sim_speed > 0 && sleepTime > 0)
-    {
-        glutTimerFunc(sleepTime, simulate, 0);
-    }
-    else if (verbose_mode)
-    {
-        printf("Idling\n");
-    }
+    if (paused) return;
+    simulate();
 }
 
 void toggle_cell(int x, int y)
@@ -216,30 +201,19 @@ void toggle_cell(int x, int y)
         cell_grid[cx][cy] = 1;
         num_cells_live += 1;
     }
-
-    display();
 }
 
 void kbd_func(unsigned char key, int x, int y)
 {
-    int oldSpeed = sim_speed;
     switch(key)
     {
         case 'Q': case 'q': shutdown();
-        case 'R': case 'r': randomize_grid(); draw_board(); sim_speed = 0; glutPostRedisplay(); break;
-        case 'C': case 'c': clear_grid(); draw_board(); sim_speed = 0; glutPostRedisplay(); break;
-        case 'P': case 'p': sim_speed = 0; break;
-        case '1': sim_speed = 1; break;
-        case '2': sim_speed = 2; break;
-        case '3': sim_speed = 3; break;
-        case 'S': case 's': sim_speed = 0; simulate(0); glutPostRedisplay(); break;
+        case 'R': case 'r': randomize_grid(); draw_board(); glutPostRedisplay(); break;
+        case 'C': case 'c': clear_grid(); draw_board(); glutPostRedisplay(); break;
+        case 'P': case 'p': paused = (paused + 1) % 2; break;
+        case 'S': case 's': simulate(); glutPostRedisplay(); break;
         case 'V': case 'v': verbose_mode = verbose_mode == true ? false : true; break;
         case 'A': case 'a': color_mode = color_mode == true ? false : true; draw_board(); break;
-    }
-
-    if (oldSpeed != sim_speed && oldSpeed == 0)
-    {
-        glutPostRedisplay();
     }
 }
 
@@ -273,7 +247,6 @@ void free_2d_array(unsigned char** arr, int width)
 void print_help()
 {
     printf("Instructions:\n");
-    printf("Press 1, 2, or 3 to run the simulation at varying speeds (3 is fast)\n");
     printf("Press P to pause the simulation\n");
     printf("Press S to simulate a single generation\n");
     printf("Press R to randomize the board\n");

@@ -12,7 +12,7 @@
 void reshape(int, int);
 void randomize_grid();
 void clear_grid();
-void simulate(int);
+void simulate();
 void display();
 void kbd_func(unsigned char, int, int);
 void mouse_func(int, int, int, int);

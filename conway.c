@@ -1,5 +1,13 @@
 #include "conway.h"
 
+int window_id;
+unsigned char** cell_grid;
+int num_cells_live = 0;
+bool verbose_mode = false;
+bool color_mode = true;
+bool paused = true;
+unsigned int sleep_time = 1000000;
+
 void reshape(int width, int height)
 {
     glMatrixMode(GL_PROJECTION);

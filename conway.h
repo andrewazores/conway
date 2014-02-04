@@ -17,14 +17,6 @@
 #define CONWAY_WIN_WIDTH CONWAY_GRID_WIDTH*PX_SIZE
 #define CONWAY_WIN_HEIGHT CONWAY_GRID_HEIGHT*PX_SIZE
 
-int window_id;
-unsigned char** cell_grid;
-int num_cells_live = 0;
-bool verbose_mode = false;
-bool color_mode = true;
-bool paused = true;
-unsigned int sleep_time = 1000000;
-
 void reshape(int, int);
 void randomize_grid();
 void clear_grid();

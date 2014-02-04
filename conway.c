@@ -201,11 +201,11 @@ void kbd_func(unsigned char key, int x, int y)
 {
     switch(key)
     {
-        case '1': sleep_time = 1000000; break; // 1 frame per second
-        case '2': sleep_time = 100000; break; // 10 frames per second
-        case '3': sleep_time = 40000; break; // 25 frames per second
-        case '4': sleep_time = 20000; break; // 50 frames per second
-        case '5': sleep_time = 0; break; // as many frames per second as we can
+        case '1': sleep_time = 1000000; paused = false; break; // 1 frame per second
+        case '2': sleep_time = 100000; paused = false; break; // 10 frames per second
+        case '3': sleep_time = 40000; paused = false; break; // 25 frames per second
+        case '4': sleep_time = 20000; paused = false; break; // 50 frames per second
+        case '5': sleep_time = 0; paused = false; break; // as many frames per second as we can
         case 'Q': case 'q': shutdown(); break;
         case 'R': case 'r': randomize_grid(); draw_board(); glutPostRedisplay(); break;
         case 'C': case 'c': clear_grid(); draw_board(); glutPostRedisplay(); break;

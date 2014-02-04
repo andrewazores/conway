@@ -168,6 +168,7 @@ void display()
 {
     draw_board();
     if (paused) return;
+    usleep(sleep_time);
     simulate();
 }
 
@@ -192,7 +193,12 @@ void kbd_func(unsigned char key, int x, int y)
 {
     switch(key)
     {
-        case 'Q': case 'q': shutdown();
+        case '1': sleep_time = 1000000; break; // 1 frame per second
+        case '2': sleep_time = 100000; break; // 10 frames per second
+        case '3': sleep_time = 40000; break; // 25 frames per second
+        case '4': sleep_time = 20000; break; // 50 frames per second
+        case '5': sleep_time = 0; break; // as many frames per second as we can
+        case 'Q': case 'q': shutdown(); break;
         case 'R': case 'r': randomize_grid(); draw_board(); glutPostRedisplay(); break;
         case 'C': case 'c': clear_grid(); draw_board(); glutPostRedisplay(); break;
         case 'P': case 'p': paused = (paused + 1) % 2; break;
@@ -232,6 +238,7 @@ void free_2d_array(unsigned char** arr, int width)
 void print_help()
 {
     printf("Instructions:\n");
+    printf("Press 1 (slowest) - 5 (fastest) to select a simulation speed\n");
     printf("Press P to (un)pause the simulation\n");
     printf("Press S to simulate a single generation\n");
     printf("Press R to randomize the board\n");

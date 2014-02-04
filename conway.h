@@ -7,6 +7,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <time.h>
+#include <unistd.h>
 
 #define CONWAY_GRID_WIDTH 80
 #define CONWAY_GRID_HEIGHT 60
@@ -22,6 +23,7 @@ int num_cells_live = 0;
 bool verbose_mode = false;
 bool color_mode = true;
 bool paused = true;
+unsigned int sleep_time = 1000000;
 
 void reshape(int, int);
 void randomize_grid();

@@ -207,10 +207,10 @@ void kbd_func(unsigned char key, int x, int y)
         case '4': sleep_time = 20000; paused = false; break; // 50 frames per second
         case '5': sleep_time = 0; paused = false; break; // as many frames per second as we can
         case 'Q': case 'q': shutdown(); break;
-        case 'R': case 'r': randomize_grid(); draw_board(); glutPostRedisplay(); break;
-        case 'C': case 'c': clear_grid(); draw_board(); glutPostRedisplay(); break;
+        case 'R': case 'r': randomize_grid(); draw_board(); break;
+        case 'C': case 'c': clear_grid(); draw_board(); break;
         case 'P': case 'p': paused = (paused + 1) % 2; break;
-        case 'S': case 's': simulate(); glutPostRedisplay(); break;
+        case 'S': case 's': simulate(); break;
         case 'V': case 'v': verbose_mode = verbose_mode == true ? false : true; break;
         case 'A': case 'a': color_mode = color_mode == true ? false : true; draw_board(); break;
     }

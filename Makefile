@@ -1,5 +1,5 @@
 CC=gcc
-CFLAGS=-std=c99 -Wall -Wextra -Wdouble-promotion -Wformat -Wconversion -Wpedantic
+CFLAGS=-std=gnu99 -Wall -Wextra -Wdouble-promotion -Wformat -Wconversion -Wpedantic
 LIBS=-lGL -lGLU -lglut
 all:
 	mkdir -p gen

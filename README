@@ -1,5 +1,5 @@
 A simple ``Conway's Game of Life'' implementation, written in
-C99.
+C99 with GNU extensions.
 
 'make' will create an executable at ./gen/conway.o, which is the
 game. 'make clean' will remove this.

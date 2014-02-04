@@ -129,7 +129,7 @@ void draw_board()
 
 void simulate(int unused)
 {
-    unsigned char** newCells = make_2d_array(CONWAY_GRID_WIDTH, CONWAY_GRID_HEIGHT);
+    unsigned char** new_cells = make_2d_array(CONWAY_GRID_WIDTH, CONWAY_GRID_HEIGHT);
     for (int i = 0; i < CONWAY_GRID_WIDTH; ++i)
     {
         for (int j = 0; j < CONWAY_GRID_HEIGHT; ++j)
@@ -141,11 +141,11 @@ void simulate(int unused)
             { // Live cell
                 if (sum == 2 || sum == 3)
                 {
-                    newCells[i][j] = 1;
+                    new_cells[i][j] = 1;
                 }
                 else
                 { // sum < 2 || sum > 3
-                    newCells[i][j] = 0;
+                    new_cells[i][j] = 0;
                     num_cells_live -= 1;
                 }
             }
@@ -153,19 +153,19 @@ void simulate(int unused)
             { // Dead cell
                 if (sum == 3)
                 {
-                    newCells[i][j] = 1;
+                    new_cells[i][j] = 1;
                     num_cells_live += 1;
                 }
                 else
                 {
-                    newCells[i][j] = 0;
+                    new_cells[i][j] = 0;
                 }
             }
         }
     }
 
     free_2d_array(cell_grid, CONWAY_GRID_WIDTH);
-    cell_grid = newCells;
+    cell_grid = new_cells;
 
     if (verbose_mode)
     {

@@ -1,12 +1,12 @@
 #include "conway.h"
 
-#define CONWAY_WIN_WIDTH 640
-#define CONWAY_WIN_HEIGHT 480
-
 #define CONWAY_GRID_WIDTH 80
 #define CONWAY_GRID_HEIGHT 60
 
-#define PX_SIZE 8
+#define PX_SIZE 12
+
+#define CONWAY_WIN_WIDTH CONWAY_GRID_WIDTH*PX_SIZE
+#define CONWAY_WIN_HEIGHT CONWAY_GRID_HEIGHT*PX_SIZE
 
 int window_id;
 unsigned char** cell_grid;

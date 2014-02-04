@@ -1,12 +1,12 @@
 #ifndef CONWAY_H_GUARD
 #define CONWAY_H_GUARD
 
+#include <GL/gl.h>
+#include <GL/glut.h>
+#include <stdbool.h>
 #include <stdio.h>
 #include <string.h>
-#include <GL/glut.h>
-#include <GL/gl.h>
 #include <time.h>
-#include <stdbool.h>
 
 #define CONWAY_GRID_WIDTH 80
 #define CONWAY_GRID_HEIGHT 60

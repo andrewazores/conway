@@ -264,17 +264,25 @@ void free_2d_array(unsigned char** arr, int width)
 
 void print_help()
 {
-    printf("Instructions:\n");
-    printf("Press 1 (slowest) - 5 (fastest) to select a simulation speed\n");
-    printf("Press P to (un)pause the simulation\n");
-    printf("Press S to simulate a single generation\n");
-    printf("Press R to randomize the board\n");
-    printf("Press C to clear the board\n");
-    printf("Click a cell on-screen to toggle it on and off individually\n");
-    printf("Press A to toggle colour\n");
-    printf("Press G to toggle gridlines\n");
-    printf("Press V to toggle verbose terminal output\n");
-    printf("Press Q to quit\n");
+    printf("Flags:\n");
+    printf("-h\tthis help message\n");
+    printf("-l N\tset grid \"length\" (height) to N\n");
+    printf("-w N\tset grid width to N\n");
+    printf("-g\tdisable gridlines\n");
+    printf("-r\tstart already running, not paused\n");
+    printf("-s N\tset initial run speed to N (1-5)\n");
+    printf("-p N\tset cell size to N pixels\n");
+    printf("In-window controls:\n");
+    printf("\tPress 1 (slowest) - 5 (fastest) to select a simulation speed\n");
+    printf("\tPress P to (un)pause the simulation\n");
+    printf("\tPress S to simulate a single generation\n");
+    printf("\tPress R to randomize the board\n");
+    printf("\tPress C to clear the board\n");
+    printf("\tClick a cell on-screen to toggle it on and off individually\n");
+    printf("\tPress A to toggle colour\n");
+    printf("\tPress G to toggle gridlines\n");
+    printf("\tPress V to toggle verbose terminal output\n");
+    printf("\tPress Q to quit\n");
 }
 
 void shutdown()
@@ -287,17 +295,16 @@ void shutdown()
 int set_opts(int argc, char** argv)
 {
     int c;
-    while ((c = getopt (argc, argv, "gw:h:p:")) != -1)
+    while ((c = getopt(argc, argv, "hl:w:grs:p:")) != -1)
         switch (c)
         {
-            case 'g':
-                draw_gridlines = false; break;
-            case 'w':
-                grid_width = atoi(optarg); break;
-            case 'h':
-                grid_height = atoi(optarg); break;
-            case 'p':
-                px_size = atoi(optarg); break;
+            case 'h': print_help(); exit(0);
+            case 'l': grid_height = atoi(optarg); break;
+            case 'w': grid_width = atoi(optarg); break;
+            case 'g': draw_gridlines = false; break;
+            case 'r': paused = false; break;
+            case 's': kbd_func(*optarg, 0, 0); break;
+            case 'p': px_size = atoi(optarg); break;
             case '?':
                 if (optopt == 'w' || optopt == 'h' || optopt == 'p')
                   fprintf (stderr, "Option -%c requires an argument.\n", optopt);
@@ -321,7 +328,6 @@ int main(int argc, char** argv)
     set_opts(argc, argv);
     cell_grid = make_2d_array(grid_width, grid_height);
     randomize_grid();
-    print_help();
 
     glutInitDisplayMode(GLUT_RGB|GLUT_DOUBLE);
     glutInitWindowSize(grid_width * px_size, grid_height * px_size);

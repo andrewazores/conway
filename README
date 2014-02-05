@@ -5,3 +5,5 @@ C99 with GNU extensions.
 game. 'make clean' will remove this.
 
 freeglut is required.
+
+'conway.o -h' for the help text.

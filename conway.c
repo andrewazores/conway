@@ -7,6 +7,7 @@ unsigned char** cell_grid;
 int num_cells_live = 0;
 bool verbose_mode = false;
 bool color_mode = true;
+bool draw_gridlines = true;
 bool paused = true;
 unsigned int sleep_time = 1000000;
 
@@ -102,6 +103,7 @@ void draw_cell(int x, int y, int neighbours)
 
 void draw_gridline(int x1, int y1, int x2, int y2)
 {
+    if (!draw_gridlines) return;
     glBegin(GL_LINES);
         glColor4f(0.7f, 0.7f, 0.7f, 1.0f);
         glVertex2i(x1, y1);
@@ -221,6 +223,7 @@ void kbd_func(unsigned char key, int x, int y)
         case 'S': case 's': paused = true; simulate(); break;
         case 'V': case 'v': verbose_mode = !verbose_mode; break;
         case 'A': case 'a': color_mode = !color_mode; draw_board(); break;
+        case 'G': case 'g': draw_gridlines = !draw_gridlines; break;
     }
 }
 
@@ -269,6 +272,7 @@ void print_help()
     printf("Press C to clear the board\n");
     printf("Click a cell on-screen to toggle it on and off individually\n");
     printf("Press A to toggle colour\n");
+    printf("Press G to toggle gridlines\n");
     printf("Press V to toggle verbose terminal output\n");
     printf("Press Q to quit\n");
 }
@@ -283,9 +287,11 @@ void shutdown()
 int set_opts(int argc, char** argv)
 {
     int c;
-    while ((c = getopt (argc, argv, "w:h:p:")) != -1)
+    while ((c = getopt (argc, argv, "gw:h:p:")) != -1)
         switch (c)
         {
+            case 'g':
+                draw_gridlines = false; break;
             case 'w':
                 grid_width = atoi(optarg); break;
             case 'h':

@@ -25,8 +25,8 @@ void kbd_func(unsigned char, int, int);
 void mouse_func(int, int, int, int);
 void print_help();
 void shutdown();
-unsigned char** make_2d_array(int, int);
-void free_2d_array(unsigned char**, int);
+bool** make_2d_array(int, int);
+void free_2d_array(bool**, int);
 int main(int, char**);
 
 int get_neighbours(int, int);

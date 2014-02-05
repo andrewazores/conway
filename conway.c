@@ -3,7 +3,7 @@
 #define UNUSED(x) (void)(x)
 
 int window_id;
-unsigned char** cell_grid;
+bool** cell_grid;
 int num_cells_live = 0;
 bool verbose_mode = false;
 bool color_mode = true;
@@ -38,8 +38,8 @@ randomize_grid()
     {
         for (int j = 0; j < grid_height; ++j)
         {
-            cell_grid[i][j] = (unsigned char)rand() % 2;
-            num_cells_live += (int)cell_grid[i][j];
+            cell_grid[i][j] = (bool)(rand() % 2);
+            num_cells_live += cell_grid[i][j];
         }
     }
     glClear(GL_COLOR_BUFFER_BIT);
@@ -48,7 +48,7 @@ randomize_grid()
 void
 clear_grid()
 {
-    unsigned char** new_cells = make_2d_array(grid_width, grid_height);
+    bool** new_cells = make_2d_array(grid_width, grid_height);
     free_2d_array(cell_grid, grid_width);
     cell_grid = new_cells;
 
@@ -83,7 +83,7 @@ draw_cell(int x, int y, int neighbours)
     glBegin(GL_POINTS);
     if (color_mode)
     {
-        switch(neighbours)
+        switch (neighbours)
         {
             case 0: glColor4f(1.0f, 0.0f, 0.0f, 1.0f); break;
             case 2: case 3: glColor4f(0.0f, 1.0f, 0.0f, 1.0f); break;
@@ -137,7 +137,7 @@ draw_board()
 void
 simulate()
 {
-    unsigned char** new_cells = make_2d_array(grid_width, grid_height);
+    bool** new_cells = make_2d_array(grid_width, grid_height);
     for (int i = 0; i < grid_width; ++i)
     {
         for (int j = 0; j < grid_height; ++j)
@@ -145,29 +145,15 @@ simulate()
             
             int sum = get_neighbours(i, j);
 
-            if (cell_grid[i][j] == 1)
+            if (cell_grid[i][j])
             { // Live cell
-                if (sum == 2 || sum == 3)
-                {
-                    new_cells[i][j] = 1;
-                }
-                else
-                { // sum < 2 || sum > 3
-                    new_cells[i][j] = 0;
-                    num_cells_live -= 1;
-                }
+                new_cells[i][j] = (sum == 2 || sum == 3);
+                num_cells_live -= !new_cells[i][j];
             }
             else
             { // Dead cell
-                if (sum == 3)
-                {
-                    new_cells[i][j] = 1;
-                    num_cells_live += 1;
-                }
-                else
-                {
-                    new_cells[i][j] = 0;
-                }
+                new_cells[i][j] = (sum == 3);
+                num_cells_live += new_cells[i][j];
             }
         }
     }
@@ -202,14 +188,14 @@ toggle_cell(int x, int y)
     int cx = (int)x/px_size;
     int cy = (int)y/px_size;
 
+    cell_grid[cx][cy] = !cell_grid[cx][cy];
     if (cell_grid[cx][cy])
     {
-        cell_grid[cx][cy] = 0;
         num_cells_live -= 1;
     }
     else
     {
-        cell_grid[cx][cy] = 1;
+        cell_grid[cx][cy] = true;
         num_cells_live += 1;
     }
 }
@@ -245,17 +231,17 @@ mouse_func(int button, int state, int x, int y)
     }
 }
 
-unsigned char**
+bool**
 make_2d_array(int width, int height)
 {
-    unsigned char** arr = (unsigned char**) calloc(width, sizeof(unsigned char*));
+    bool** arr = (bool**) calloc(width, sizeof(bool*));
     if (arr == NULL)
     {
         printf("Could not allocate memory!\n"); exit(1);
     }
     for (int i = 0; i < width; ++i)
     {
-        arr[i] = (unsigned char*) calloc(height, sizeof(unsigned char));
+        arr[i] = (bool*) calloc(height, sizeof(bool));
         if (arr[i] == NULL)
         {
             printf("Could not allocate memory!\n"); exit(1);
@@ -265,7 +251,7 @@ make_2d_array(int width, int height)
 }
 
 void
-free_2d_array(unsigned char** arr, int width)
+free_2d_array(bool** arr, int width)
 {
     for (int i = 0; i < width; ++i)
     {

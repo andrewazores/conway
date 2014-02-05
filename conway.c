@@ -15,7 +15,8 @@ int grid_width = DEFAULT_GRID_WIDTH,
     grid_height = DEFAULT_GRID_HEIGHT,
     px_size = DEFAULT_PX_SIZE;
 
-void reshape(int width, int height)
+void
+reshape(int width, int height)
 {
     UNUSED(width); UNUSED(height);
     glMatrixMode(GL_PROJECTION);
@@ -29,7 +30,8 @@ void reshape(int width, int height)
     glClear(GL_COLOR_BUFFER_BIT);
 }
 
-void randomize_grid()
+void
+randomize_grid()
 {
     srand((unsigned int)time(NULL));
     for (int i = 0; i < grid_width; ++i)
@@ -43,7 +45,9 @@ void randomize_grid()
     glClear(GL_COLOR_BUFFER_BIT);
 }
 
-void clear_grid() {
+void
+clear_grid()
+{
     unsigned char** new_cells = make_2d_array(grid_width, grid_height);
     free_2d_array(cell_grid, grid_width);
     cell_grid = new_cells;
@@ -52,7 +56,8 @@ void clear_grid() {
     glClear(GL_COLOR_BUFFER_BIT);
 }
 
-int get_neighbours(int i, int j)
+int
+get_neighbours(int i, int j)
 {
     int MAX_NORTH = 0, MAX_SOUTH = grid_height - 1;
     int MAX_WEST = 0, MAX_EAST = grid_width - 1;
@@ -71,7 +76,8 @@ int get_neighbours(int i, int j)
     return sum;
 }
 
-void draw_cell(int x, int y, int neighbours)
+void
+draw_cell(int x, int y, int neighbours)
 {
     glPointSize((GLfloat)px_size);
     glBegin(GL_POINTS);
@@ -98,7 +104,8 @@ void draw_cell(int x, int y, int neighbours)
     glEnd();
 }
 
-void draw_gridline(int x1, int y1, int x2, int y2)
+void
+draw_gridline(int x1, int y1, int x2, int y2)
 {
     if (!draw_gridlines) return;
     glBegin(GL_LINES);
@@ -108,7 +115,8 @@ void draw_gridline(int x1, int y1, int x2, int y2)
     glEnd();
 }
 
-void draw_board()
+void
+draw_board()
 {
     glClear(GL_COLOR_BUFFER_BIT);
     for (int i = 0; i < grid_width; ++i)
@@ -126,7 +134,8 @@ void draw_board()
     glutSwapBuffers();
 }
 
-void simulate()
+void
+simulate()
 {
     unsigned char** new_cells = make_2d_array(grid_width, grid_height);
     for (int i = 0; i < grid_width; ++i)
@@ -178,7 +187,8 @@ void simulate()
 
 }
 
-void display()
+void
+display()
 {
     draw_board();
     if (paused) return;
@@ -186,7 +196,8 @@ void display()
     simulate();
 }
 
-void toggle_cell(int x, int y)
+void
+toggle_cell(int x, int y)
 {
     int cx = (int)x/px_size;
     int cy = (int)y/px_size;
@@ -203,7 +214,8 @@ void toggle_cell(int x, int y)
     }
 }
 
-void kbd_func(unsigned char key, int x, int y)
+void
+kbd_func(unsigned char key, int x, int y)
 {
     UNUSED(x); UNUSED(y);
     switch(key)
@@ -224,7 +236,8 @@ void kbd_func(unsigned char key, int x, int y)
     }
 }
 
-void mouse_func(int button, int state, int x, int y)
+void
+mouse_func(int button, int state, int x, int y)
 {
     if (button == GLUT_LEFT_BUTTON && state)
     {
@@ -232,7 +245,8 @@ void mouse_func(int button, int state, int x, int y)
     }
 }
 
-unsigned char** make_2d_array(int width, int height)
+unsigned char**
+make_2d_array(int width, int height)
 {
     unsigned char** arr = (unsigned char**) calloc(width, sizeof(unsigned char*));
     if (arr == NULL)
@@ -250,7 +264,8 @@ unsigned char** make_2d_array(int width, int height)
     return arr;
 }
 
-void free_2d_array(unsigned char** arr, int width)
+void
+free_2d_array(unsigned char** arr, int width)
 {
     for (int i = 0; i < width; ++i)
     {
@@ -259,7 +274,8 @@ void free_2d_array(unsigned char** arr, int width)
     free(arr);
 }
 
-void print_help()
+void
+print_help()
 {
     printf("Flags:\n");
     printf("-h\tthis help message\n");
@@ -282,14 +298,16 @@ void print_help()
     printf("\tPress Q to quit\n");
 }
 
-void shutdown()
+void
+shutdown()
 {
     glutDestroyWindow(window_id);
     free_2d_array(cell_grid, grid_width);
     exit(0);
 }
 
-int set_opts(int argc, char** argv)
+int
+set_opts(int argc, char** argv)
 {
     int c;
     while ((c = getopt(argc, argv, "hl:w:grs:p:")) != -1)
@@ -318,7 +336,8 @@ int set_opts(int argc, char** argv)
     return 0;
 }
 
-int main(int argc, char** argv)
+int
+main(int argc, char** argv)
 {
     int parse_status = set_opts(argc, argv);
     if (parse_status) exit(parse_status);

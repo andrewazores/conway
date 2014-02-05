@@ -8,25 +8,29 @@ bool color_mode = true;
 bool paused = true;
 unsigned int sleep_time = 1000000;
 
+int grid_width = DEFAULT_GRID_WIDTH,
+    grid_height = DEFAULT_GRID_HEIGHT,
+    px_size = DEFAULT_PX_SIZE;
+
 void reshape(int width, int height)
 {
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    glOrtho(0.0f, CONWAY_WIN_WIDTH, CONWAY_WIN_HEIGHT, 0.0f, 0.0f, 1.0f);
+    glOrtho(0.0f, grid_width * px_size, grid_height * px_size, 0.0f, 0.0f, 1.0f);
 
     glMatrixMode(GL_MODELVIEW);
-    glViewport(0, 0, CONWAY_WIN_WIDTH, CONWAY_WIN_HEIGHT);
+    glViewport(0, 0, grid_width * px_size, grid_height * px_size);
 
-    glutReshapeWindow(CONWAY_WIN_WIDTH, CONWAY_WIN_HEIGHT);
+    glutReshapeWindow(grid_width * px_size, grid_height * px_size);
     glClear(GL_COLOR_BUFFER_BIT);
 }
 
 void randomize_grid()
 {
     srand((unsigned int)time(NULL));
-    for (int i = 0; i < CONWAY_GRID_WIDTH; ++i)
+    for (int i = 0; i < grid_width; ++i)
     {
-        for (int j = 0; j < CONWAY_GRID_HEIGHT; ++j)
+        for (int j = 0; j < grid_height; ++j)
         {
             cell_grid[i][j] = (unsigned char)rand() % 2;
             num_cells_live += (int)cell_grid[i][j];
@@ -36,9 +40,9 @@ void randomize_grid()
 }
 
 void clear_grid() {
-    for (int i = 0; i < CONWAY_GRID_WIDTH; ++i)
+    for (int i = 0; i < grid_width; ++i)
     {
-        for (int j = 0; j < CONWAY_GRID_HEIGHT; ++j)
+        for (int j = 0; j < grid_height; ++j)
         {
             cell_grid[i][j] = 0;
         }
@@ -49,8 +53,8 @@ void clear_grid() {
 
 int get_neighbours(int i, int j)
 {
-    int MAX_NORTH = 0, MAX_SOUTH = CONWAY_GRID_HEIGHT - 1;
-    int MAX_WEST = 0, MAX_EAST = CONWAY_GRID_WIDTH - 1;
+    int MAX_NORTH = 0, MAX_SOUTH = grid_height - 1;
+    int MAX_WEST = 0, MAX_EAST = grid_width - 1;
     int sum = 0;
 
     if (i != MAX_EAST) sum += cell_grid[i + 1][j];
@@ -68,7 +72,7 @@ int get_neighbours(int i, int j)
 
 void draw_cell(int x, int y, int neighbours)
 {
-    glPointSize(PX_SIZE);
+    glPointSize(px_size);
     glBegin(GL_POINTS);
     if (color_mode)
     {
@@ -89,7 +93,7 @@ void draw_cell(int x, int y, int neighbours)
         glColor4f(0.0f, 0.0f, 0.0f, 1.0f);
     }
         
-    glVertex2i(PX_SIZE*x + PX_SIZE/2, PX_SIZE*y + PX_SIZE/2);
+    glVertex2i(px_size*x + px_size/2, px_size*y + px_size/2);
     glEnd();
 }
 
@@ -105,27 +109,27 @@ void draw_gridline(int x1, int y1, int x2, int y2)
 void draw_board()
 {
     glClear(GL_COLOR_BUFFER_BIT);
-    for (int i = 0; i < CONWAY_GRID_WIDTH; ++i)
+    for (int i = 0; i < grid_width; ++i)
     {
-        for (int j = 0; j < CONWAY_GRID_HEIGHT; ++j)
+        for (int j = 0; j < grid_height; ++j)
         {
             if (cell_grid[i][j])
             {
                 draw_cell(i, j, get_neighbours(i, j));
             }
-            draw_gridline(0, j*PX_SIZE, PX_SIZE * CONWAY_GRID_WIDTH, j*PX_SIZE);
+            draw_gridline(0, j*px_size, px_size * grid_width, j*px_size);
         }
-        draw_gridline(i*PX_SIZE, 0, i*PX_SIZE, PX_SIZE * CONWAY_GRID_HEIGHT);
+        draw_gridline(i*px_size, 0, i*px_size, px_size * grid_height);
     }
     glutSwapBuffers();
 }
 
 void simulate()
 {
-    unsigned char** new_cells = make_2d_array(CONWAY_GRID_WIDTH, CONWAY_GRID_HEIGHT);
-    for (int i = 0; i < CONWAY_GRID_WIDTH; ++i)
+    unsigned char** new_cells = make_2d_array(grid_width, grid_height);
+    for (int i = 0; i < grid_width; ++i)
     {
-        for (int j = 0; j < CONWAY_GRID_HEIGHT; ++j)
+        for (int j = 0; j < grid_height; ++j)
         {
             
             int sum = get_neighbours(i, j);
@@ -157,7 +161,7 @@ void simulate()
         }
     }
 
-    free_2d_array(cell_grid, CONWAY_GRID_WIDTH);
+    free_2d_array(cell_grid, grid_width);
     cell_grid = new_cells;
 
     if (verbose_mode)
@@ -182,8 +186,8 @@ void display()
 
 void toggle_cell(int x, int y)
 {
-    int cx = (int)x/PX_SIZE;
-    int cy = (int)y/PX_SIZE;
+    int cx = (int)x/px_size;
+    int cy = (int)y/px_size;
 
     if (cell_grid[cx][cy])
     {
@@ -260,18 +264,18 @@ void print_help()
 void shutdown()
 {
     glutDestroyWindow(window_id);
-    free_2d_array(cell_grid, CONWAY_GRID_WIDTH);
+    free_2d_array(cell_grid, grid_width);
     exit(0);
 }
 
 int main(int argc, char** argv)
 {
-    cell_grid = make_2d_array(CONWAY_GRID_WIDTH, CONWAY_GRID_HEIGHT);
+    cell_grid = make_2d_array(grid_width, grid_height);
     randomize_grid();
     print_help();
 
     glutInitDisplayMode(GLUT_RGB|GLUT_DOUBLE);
-    glutInitWindowSize(CONWAY_WIN_WIDTH, CONWAY_WIN_HEIGHT);
+    glutInitWindowSize(grid_width * px_size, grid_height * px_size);
     glutInitWindowPosition(0, 0);   
     glutInit(&argc, argv);
 
@@ -279,7 +283,7 @@ int main(int argc, char** argv)
 
     glClearColor(1.0f, 1.0f, 1.0f, 0.0f);
     glClear(GL_COLOR_BUFFER_BIT);
-    reshape(CONWAY_WIN_WIDTH, CONWAY_WIN_HEIGHT);
+    reshape(grid_width * px_size, grid_height * px_size);
 
     glutReshapeFunc(reshape);
     glutDisplayFunc(display);

@@ -9,13 +9,10 @@
 #include <time.h>
 #include <unistd.h>
 
-#define CONWAY_GRID_WIDTH 80
-#define CONWAY_GRID_HEIGHT 60
+#define DEFAULT_GRID_WIDTH 80
+#define DEFAULT_GRID_HEIGHT 60
 
-#define PX_SIZE 8
-
-#define CONWAY_WIN_WIDTH CONWAY_GRID_WIDTH*PX_SIZE
-#define CONWAY_WIN_HEIGHT CONWAY_GRID_HEIGHT*PX_SIZE
+#define DEFAULT_PX_SIZE 8
 
 void reshape(int, int);
 void randomize_grid();

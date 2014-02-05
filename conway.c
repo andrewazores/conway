@@ -244,6 +244,7 @@ print_help()
     printf("-r\tstart already running, not paused\n");
     printf("-s N\tset initial run speed to N (1-5)\n");
     printf("-p N\tset cell size to N pixels\n");
+    printf("-c\tdisable colorized output\n");
     printf("In-window controls:\n");
     printf("\tPress 1 (slowest) - 5 (fastest) to select a simulation speed\n");
     printf("\tPress P to (un)pause the simulation\n");
@@ -268,7 +269,7 @@ int
 set_opts(int argc, char** argv)
 {
     int c;
-    while ((c = getopt(argc, argv, "hl:w:grs:p:")) != -1)
+    while ((c = getopt(argc, argv, "hl:w:grs:p:c")) != -1)
         switch (c)
         {
             case 'h': print_help(); exit(0);
@@ -278,6 +279,7 @@ set_opts(int argc, char** argv)
             case 'r': paused = false; break;
             case 's': kbd_func((unsigned char)*optarg, 0, 0); break;
             case 'p': px_size = atoi(optarg); break;
+            case 'c': color_mode = false; break;
             case '?':
                 if (optopt == 'w' || optopt == 'h' || optopt == 'p')
                   fprintf (stderr, "Option -%c requires an argument.\n", optopt);

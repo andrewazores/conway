@@ -318,7 +318,7 @@ set_opts(int argc, char** argv)
             case 'w': grid_width = atoi(optarg); break;
             case 'g': draw_gridlines = false; break;
             case 'r': paused = false; break;
-            case 's': kbd_func(*optarg, 0, 0); break;
+            case 's': kbd_func((unsigned char)*optarg, 0, 0); break;
             case 'p': px_size = atoi(optarg); break;
             case '?':
                 if (optopt == 'w' || optopt == 'h' || optopt == 'p')

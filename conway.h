@@ -1,10 +1,12 @@
 #ifndef CONWAY_H_GUARD
 #define CONWAY_H_GUARD
 
+#include <ctype.h>
 #include <GL/gl.h>
 #include <GL/glut.h>
 #include <stdbool.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include <time.h>
 #include <unistd.h>
@@ -12,7 +14,7 @@
 #define DEFAULT_GRID_WIDTH 80
 #define DEFAULT_GRID_HEIGHT 60
 
-#define DEFAULT_PX_SIZE 8
+#define DEFAULT_PX_SIZE 8.0f
 
 void reshape(int, int);
 void randomize_grid();

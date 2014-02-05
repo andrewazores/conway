@@ -1,5 +1,7 @@
 #include "conway.h"
 
+#define UNUSED(x) (void)(x)
+
 int window_id;
 unsigned char** cell_grid;
 int num_cells_live = 0;
@@ -14,6 +16,7 @@ int grid_width = DEFAULT_GRID_WIDTH,
 
 void reshape(int width, int height)
 {
+    UNUSED(width); UNUSED(height);
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
     glOrtho(0.0f, grid_width * px_size, grid_height * px_size, 0.0f, 0.0f, 1.0f);
@@ -72,7 +75,7 @@ int get_neighbours(int i, int j)
 
 void draw_cell(int x, int y, int neighbours)
 {
-    glPointSize(px_size);
+    glPointSize((GLfloat)px_size);
     glBegin(GL_POINTS);
     if (color_mode)
     {
@@ -203,6 +206,7 @@ void toggle_cell(int x, int y)
 
 void kbd_func(unsigned char key, int x, int y)
 {
+    UNUSED(x); UNUSED(y);
     switch(key)
     {
         case '1': sleep_time = 1000000; paused = false; break; // 1 frame per second
@@ -231,9 +235,17 @@ void mouse_func(int button, int state, int x, int y)
 unsigned char** make_2d_array(int width, int height)
 {
     unsigned char** arr = (unsigned char**) malloc(width * sizeof(unsigned char*));
+    if (arr == NULL)
+    {
+        printf("Could not allocate memory!\n"); exit(1);
+    }
     for (int i = 0; i < width; ++i)
     {
         arr[i] = (unsigned char*) malloc(height * sizeof(unsigned char));
+        if (arr[i] == NULL)
+        {
+            printf("Could not allocate memory!\n"); exit(1);
+        }
     }
     return arr;
 }
@@ -268,8 +280,39 @@ void shutdown()
     exit(0);
 }
 
+int set_opts(int argc, char** argv)
+{
+    int c;
+    while ((c = getopt (argc, argv, "w:h:p:")) != -1)
+        switch (c)
+        {
+            case 'w':
+                grid_width = atoi(optarg); break;
+            case 'h':
+                grid_height = atoi(optarg); break;
+            case 'p':
+                px_size = atoi(optarg); break;
+            case '?':
+                if (optopt == 'w' || optopt == 'h' || optopt == 'p')
+                  fprintf (stderr, "Option -%c requires an argument.\n", optopt);
+                else if (isprint (optopt))
+                  fprintf (stderr, "Unknown option `-%c'.\n", optopt);
+                else
+                  fprintf (stderr,
+                           "Unknown option character `\\x%x'.\n",
+                           optopt);
+                return 1;
+            default:
+                return 1;
+        }
+    return 0;
+}
+
 int main(int argc, char** argv)
 {
+    int parse_status = set_opts(argc, argv);
+    if (parse_status) exit(parse_status);
+    set_opts(argc, argv);
     cell_grid = make_2d_array(grid_width, grid_height);
     randomize_grid();
     print_help();

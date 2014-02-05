@@ -44,13 +44,10 @@ void randomize_grid()
 }
 
 void clear_grid() {
-    for (int i = 0; i < grid_width; ++i)
-    {
-        for (int j = 0; j < grid_height; ++j)
-        {
-            cell_grid[i][j] = 0;
-        }
-    }
+    unsigned char** new_cells = make_2d_array(grid_width, grid_height);
+    free_2d_array(cell_grid, grid_width);
+    cell_grid = new_cells;
+
     num_cells_live = 0;
     glClear(GL_COLOR_BUFFER_BIT);
 }
@@ -237,14 +234,14 @@ void mouse_func(int button, int state, int x, int y)
 
 unsigned char** make_2d_array(int width, int height)
 {
-    unsigned char** arr = (unsigned char**) malloc(width * sizeof(unsigned char*));
+    unsigned char** arr = (unsigned char**) calloc(width, sizeof(unsigned char*));
     if (arr == NULL)
     {
         printf("Could not allocate memory!\n"); exit(1);
     }
     for (int i = 0; i < width; ++i)
     {
-        arr[i] = (unsigned char*) malloc(height * sizeof(unsigned char));
+        arr[i] = (unsigned char*) calloc(height, sizeof(unsigned char));
         if (arr[i] == NULL)
         {
             printf("Could not allocate memory!\n"); exit(1);

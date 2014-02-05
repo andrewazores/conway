@@ -4,8 +4,6 @@
 
 int window_id;
 bool** cell_grid;
-int num_cells_live = 0;
-bool verbose_mode = false;
 bool color_mode = true;
 bool draw_gridlines = true;
 bool paused = true;
@@ -39,7 +37,6 @@ randomize_grid()
         for (int j = 0; j < grid_height; ++j)
         {
             cell_grid[i][j] = (bool)(rand() % 2);
-            num_cells_live += cell_grid[i][j];
         }
     }
     glClear(GL_COLOR_BUFFER_BIT);
@@ -52,7 +49,6 @@ clear_grid()
     free_2d_array(cell_grid, grid_width);
     cell_grid = new_cells;
 
-    num_cells_live = 0;
     glClear(GL_COLOR_BUFFER_BIT);
 }
 
@@ -148,29 +144,16 @@ simulate()
             if (cell_grid[i][j])
             { // Live cell
                 new_cells[i][j] = (sum == 2 || sum == 3);
-                num_cells_live -= !new_cells[i][j];
             }
             else
             { // Dead cell
                 new_cells[i][j] = (sum == 3);
-                num_cells_live += new_cells[i][j];
             }
         }
     }
 
     free_2d_array(cell_grid, grid_width);
     cell_grid = new_cells;
-
-    if (verbose_mode)
-    {
-        printf("Currently living cells: %d\n", num_cells_live);
-    }
-
-    if (num_cells_live == 0)
-    {
-        paused = true;
-    }
-
 }
 
 void
@@ -189,15 +172,6 @@ toggle_cell(int x, int y)
     int cy = (int)y/px_size;
 
     cell_grid[cx][cy] = !cell_grid[cx][cy];
-    if (cell_grid[cx][cy])
-    {
-        num_cells_live -= 1;
-    }
-    else
-    {
-        cell_grid[cx][cy] = true;
-        num_cells_live += 1;
-    }
 }
 
 void
@@ -216,7 +190,6 @@ kbd_func(unsigned char key, int x, int y)
         case 'C': case 'c': paused = true; clear_grid(); draw_board(); break;
         case 'P': case 'p': paused = !paused; break;
         case 'S': case 's': paused = true; simulate(); break;
-        case 'V': case 'v': verbose_mode = !verbose_mode; break;
         case 'A': case 'a': color_mode = !color_mode; draw_board(); break;
         case 'G': case 'g': draw_gridlines = !draw_gridlines; break;
     }
@@ -280,7 +253,6 @@ print_help()
     printf("\tClick a cell on-screen to toggle it on and off individually\n");
     printf("\tPress A to toggle colour\n");
     printf("\tPress G to toggle gridlines\n");
-    printf("\tPress V to toggle verbose terminal output\n");
     printf("\tPress Q to quit\n");
 }
 

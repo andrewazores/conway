@@ -100,7 +100,7 @@ draw_cell(int x, int y, int neighbours)
         glColor4f(0.0f, 0.0f, 0.0f, 1.0f);
     }
         
-    glVertex2i(px_size*x + px_size/2, px_size*y + px_size/2);
+    glVertex2i(x * px_size + px_size / 2, y * px_size + px_size / 2);
     glEnd();
 }
 
@@ -127,9 +127,9 @@ draw_board()
             {
                 draw_cell(i, j, get_neighbours(i, j));
             }
-            draw_gridline(0, j*px_size, px_size * grid_width, j*px_size);
+            draw_gridline(0, j * px_size, px_size * grid_width, j * px_size);
         }
-        draw_gridline(i*px_size, 0, i*px_size, px_size * grid_height);
+        draw_gridline(i * px_size, 0, i * px_size, px_size * grid_height);
     }
     glutSwapBuffers();
 }

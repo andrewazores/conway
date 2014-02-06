@@ -90,8 +90,7 @@ draw_cell(int x, int y, int neighbours)
             case 1: case 8: glColor4f(0.9f, 0.1f, 0.0f, 1.0f); break;
             default: glColor4f(0.0f, 0.0f, 0.0f, 1.0f); break;
         }
-    }
-    else
+    } else
     {
         glColor4f(0.0f, 0.0f, 0.0f, 1.0f);
     }
@@ -144,8 +143,7 @@ simulate()
             if (cell_grid[i][j])
             { // Live cell
                 new_cells[i][j] = (sum == 2 || sum == 3);
-            }
-            else
+            } else
             { // Dead cell
                 new_cells[i][j] = (sum == 3);
             }
@@ -270,6 +268,7 @@ set_opts(int argc, char** argv)
 {
     int c;
     while ((c = getopt(argc, argv, "hl:w:grs:p:c")) != -1)
+    {
         switch (c)
         {
             case 'h': print_help(); exit(0);
@@ -282,17 +281,22 @@ set_opts(int argc, char** argv)
             case 'c': color_mode = false; break;
             case '?':
                 if (optopt == 'w' || optopt == 'h' || optopt == 'p')
+                {
                   fprintf (stderr, "Option -%c requires an argument.\n", optopt);
-                else if (isprint (optopt))
+                } else if (isprint (optopt))
+                {
                   fprintf (stderr, "Unknown option `-%c'.\n", optopt);
-                else
+                } else
+                {
                   fprintf (stderr,
                            "Unknown option character `\\x%x'.\n",
                            optopt);
+                }
                 return 1;
             default:
                 return 1;
         }
+    }
     return 0;
 }
 

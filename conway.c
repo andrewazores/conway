@@ -9,9 +9,9 @@ bool draw_gridlines = true;
 bool paused = true;
 unsigned int sleep_time = 1000000;
 
-int grid_width = DEFAULT_GRID_WIDTH,
-    grid_height = DEFAULT_GRID_HEIGHT,
-    px_size = DEFAULT_PX_SIZE;
+int grid_width = 80,
+    grid_height = 60,
+    px_size = 8.0f;
 
 void
 reshape(int width, int height)
